@@ -18,16 +18,44 @@
   let touchStartX = 0;
   let touchStartY = 0;
   let toastTimer;
+  let fitTimer;
+
+  function fitStage() {
+    if (viewer.classList.contains("is-zoomed")) return;
+
+    const viewerStyle = window.getComputedStyle(viewer);
+    const paddingX = parseFloat(viewerStyle.paddingLeft) + parseFloat(viewerStyle.paddingRight);
+    const paddingY = parseFloat(viewerStyle.paddingTop) + parseFloat(viewerStyle.paddingBottom);
+    const viewerRect = viewer.getBoundingClientRect();
+    const safeGap = window.innerWidth <= 640 ? 18 : 28;
+    const availableWidth = Math.max(220, viewerRect.width - paddingX);
+    const availableHeight = Math.max(160, viewerRect.height - paddingY - safeGap);
+    const width = Math.floor(Math.min(availableWidth, availableHeight * 16 / 9));
+    const height = Math.floor(width * 9 / 16);
+
+    stage.style.width = `${width}px`;
+    stage.style.height = `${height}px`;
+  }
+
+  function queueFitStage() {
+    clearTimeout(fitTimer);
+    fitStage();
+    fitTimer = setTimeout(fitStage, 120);
+  }
 
   function setZoom(enabled) {
     viewer.classList.toggle("is-zoomed", enabled);
     zoomButton.setAttribute("aria-label", enabled ? "Thu nhỏ trang" : "Phóng to trang");
     zoomButton.title = enabled ? "Thu nhỏ" : "Phóng to";
     if (enabled) {
+      stage.style.width = "960px";
+      stage.style.height = "540px";
       requestAnimationFrame(() => {
         viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
         viewer.scrollTop = Math.max(0, (viewer.scrollHeight - viewer.clientHeight) / 2);
       });
+    } else {
+      queueFitStage();
     }
   }
 
@@ -155,5 +183,12 @@
   });
 
   window.addEventListener("hashchange", () => showPage(pageFromHash(), false));
+  window.addEventListener("resize", queueFitStage);
+  window.addEventListener("orientationchange", queueFitStage);
+  document.addEventListener("fullscreenchange", queueFitStage);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", queueFitStage);
+  }
+  queueFitStage();
   showPage(currentPage, false);
 })();

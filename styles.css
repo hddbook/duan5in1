@@ -104,6 +104,7 @@ svg { width: 100%; height: 100%; fill: currentColor; }
   position: relative;
   display: grid;
   width: min(100%, calc((100dvh - var(--desktop-safe-height)) * 16 / 9));
+  height: auto;
   max-height: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
@@ -205,6 +206,7 @@ input[type="range"] { width: 100%; accent-color: var(--gold); cursor: pointer; }
 
 .viewer.is-zoomed .stage {
   width: 960px;
+  height: 540px;
   max-width: none;
   max-height: none;
   border-radius: 0;
@@ -246,10 +248,7 @@ noscript {
   }
   .icon-button { width: 40px; height: 40px; }
   .viewer { padding: 8px; align-content: center; }
-  .stage {
-    width: min(100%, calc((100dvh - 112px) * 16 / 9));
-    max-height: calc(100dvh - 112px);
-  }
+  .stage { width: min(100%, calc((100dvh - 112px) * 16 / 9)); }
   .controls { grid-template-columns: 48px minmax(120px, 1fr) 48px; gap: 10px; }
   .nav-button { min-width: 44px; padding: 9px; }
   .nav-button span { display: none; }
@@ -284,7 +283,6 @@ noscript {
   .viewer { padding: 0; }
   .stage {
     width: min(100%, calc((100dvh - 74px) * 16 / 9));
-    max-height: calc(100dvh - 74px);
     border-radius: 0;
   }
   .controls { min-height: 60px; padding-top: 6px; padding-bottom: 6px; }
