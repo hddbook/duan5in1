@@ -9,6 +9,7 @@
   const nextButton = document.querySelector("#nextButton");
   const pageRange = document.querySelector("#pageRange");
   const pageLabel = document.querySelector("#pageLabel");
+  const zoomButton = document.querySelector("#zoomButton");
   const shareButton = document.querySelector("#shareButton");
   const fullscreenButton = document.querySelector("#fullscreenButton");
   const toast = document.querySelector("#toast");
@@ -17,6 +18,18 @@
   let touchStartX = 0;
   let touchStartY = 0;
   let toastTimer;
+
+  function setZoom(enabled) {
+    viewer.classList.toggle("is-zoomed", enabled);
+    zoomButton.setAttribute("aria-label", enabled ? "Thu nhỏ trang" : "Phóng to trang");
+    zoomButton.title = enabled ? "Thu nhỏ" : "Phóng to";
+    if (enabled) {
+      requestAnimationFrame(() => {
+        viewer.scrollLeft = Math.max(0, (viewer.scrollWidth - viewer.clientWidth) / 2);
+        viewer.scrollTop = Math.max(0, (viewer.scrollHeight - viewer.clientHeight) / 2);
+      });
+    }
+  }
 
   function pageFromHash() {
     const match = location.hash.match(/^#trang-(\d+)$/);
@@ -75,6 +88,8 @@
   previousButton.addEventListener("click", () => showPage(currentPage - 1));
   nextButton.addEventListener("click", () => showPage(currentPage + 1));
   pageRange.addEventListener("input", event => showPage(event.target.value));
+  zoomButton.addEventListener("click", () => setZoom(!viewer.classList.contains("is-zoomed")));
+  slide.addEventListener("dblclick", () => setZoom(!viewer.classList.contains("is-zoomed")));
 
   document.addEventListener("keydown", event => {
     if (["ArrowRight", "PageDown", " "].includes(event.key)) {
@@ -127,8 +142,12 @@
     try {
       if (!document.fullscreenElement) {
         await document.documentElement.requestFullscreen();
+        if (screen.orientation?.lock) {
+          await screen.orientation.lock("landscape").catch(() => {});
+        }
       } else {
         await document.exitFullscreen();
+        if (screen.orientation?.unlock) screen.orientation.unlock();
       }
     } catch {
       notify("Trình duyệt không hỗ trợ toàn màn hình");
