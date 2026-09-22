@@ -1,0 +1,21 @@
+HUONG DAN DUA WEBSITE LEN NETLIFY
+
+1. Dang nhap https://app.netlify.com/
+2. Vao muc Sites, chon Add new site > Deploy manually.
+3. Keo file hoa-binh-web.zip vao khu vuc tai len.
+4. Doi Netlify cap dia chi dang: ten-site.netlify.app
+5. Mo dia chi tren dien thoai de kiem tra.
+6. Gui dia chi website de tao ma QR chinh xac.
+
+LUU Y BAO MAT
+
+- Ai co lien ket hoac ma QR deu co the xem tai lieu.
+- robots.txt va noindex han che cong cu tim kiem, nhung khong phai mat khau.
+- Neu tai lieu noi bo, can dung dich vu co dang nhap hoac goi hosting ho tro bao ve bang mat khau.
+
+TOI UU DA AP DUNG
+
+- 47 trang duoc chuyen thanh WebP 1440 x 810.
+- Chi tai trang dang xem va tai truoc hai trang ke ben.
+- Ho tro vuot ngang, phim mui ten, toan man hinh va chia se lien ket.
+- Anh duoc luu dem dai han tren CDN cua Netlify.
