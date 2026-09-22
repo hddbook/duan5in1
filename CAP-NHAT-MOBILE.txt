@@ -1,24 +1,6 @@
-CAP NHAT GIAO DIEN DIEN THOAI
+Bản v7: sửa hai nút chuyển trang trong chế độ xoay ngang giả lập trên iPhone/Safari.
 
-Tren GitHub, tai lai 3 tep sau vao thu muc goc cua repository:
-- index.html
-- styles.css
-- app.js
-
-Chon Commit changes. Sau 1-3 phut, mo lai website va nhan Ctrl + F5.
-
-Thay doi:
-- An tieu de lon tren dien thoai de tang dien tich hien thi.
-- Them nut phong to va cham hai lan de phong to.
-- Nut toan man hinh se thu xoay ngang tren dien thoai Android.
-- Them huong dan xoay ngang khi dang cam dien thoai doc.
-- Giao dien ngang chiem gan toan bo man hinh.
-- Ban v3 giam chieu cao khung slide de khong mat chu phia duoi.
-- Trinh duyet se tai lai CSS/JS moi nho doi cache version len v=3.
-- Ban v4 do truc tiep chieu cao that cua khung xem, tu co slide lai de khong bi cat day.
-- Cache version doi len v=4, neu GitHub da nhan ban moi thi View source se thay styles.css?v=4.
-- Ban v5 bo thanh tieu de va thanh dieu khien duoi.
-- Chi con khung slide, nut mui ten trai/phai noi hai ben, icon phong to/toan man hinh nen trong suot.
-- Ho tro keo chuot hoac vuot ngang tren slide de chuyen trang.
-- Ban v6 them che do xoay ngang gia lap cho iPhone/Safari khi trinh duyet khong cho web tu khoa huong man hinh.
-- Bam nut toan man hinh mot lan de vao che do xoay ngang/full screen, bam lai de thoat.
+Cập nhật 2 tệp index.html và styles.css từ gói này lên thư mục gốc trang GitHub Pages, ghi đè bản v6.
+app.js đi kèm để có đủ bộ nguồn; không thay đổi chức năng so với v6.
+Giữ nguyên thư mục assets/slides/ trên website hiện tại.
+Sau khi tải lại trang, bấm nút toàn màn hình ở iPhone dựng dọc: hai nút chuyển trang sẽ xoay cùng ảnh.

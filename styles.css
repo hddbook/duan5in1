@@ -191,6 +191,20 @@ body.force-landscape .toast {
   z-index: 5;
 }
 
+/* Keep navigation in the same rotated coordinate system as the slide. */
+body.force-landscape .controls {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  width: 100dvh;
+  height: 100dvw;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+
+body.force-landscape .nav-button { position: absolute; }
+
 .nav-button {
   position: fixed;
   top: 50%;
