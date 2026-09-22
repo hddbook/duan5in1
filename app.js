@@ -10,7 +10,6 @@
   const pageRange = document.querySelector("#pageRange");
   const pageLabel = document.querySelector("#pageLabel");
   const zoomButton = document.querySelector("#zoomButton");
-  const shareButton = document.querySelector("#shareButton");
   const fullscreenButton = document.querySelector("#fullscreenButton");
   const toast = document.querySelector("#toast");
 
@@ -19,6 +18,10 @@
   let touchStartY = 0;
   let toastTimer;
   let fitTimer;
+  let pointerStartX = 0;
+  let pointerStartY = 0;
+  let pointerCurrentX = 0;
+  let isDragging = false;
 
   function fitStage() {
     if (viewer.classList.contains("is-zoomed")) return;
@@ -27,7 +30,7 @@
     const paddingX = parseFloat(viewerStyle.paddingLeft) + parseFloat(viewerStyle.paddingRight);
     const paddingY = parseFloat(viewerStyle.paddingTop) + parseFloat(viewerStyle.paddingBottom);
     const viewerRect = viewer.getBoundingClientRect();
-    const safeGap = window.innerWidth <= 640 ? 18 : 28;
+    const safeGap = window.innerWidth <= 640 ? 16 : 20;
     const availableWidth = Math.max(220, viewerRect.width - paddingX);
     const availableHeight = Math.max(160, viewerRect.height - paddingY - safeGap);
     const width = Math.floor(Math.min(availableWidth, availableHeight * 16 / 9));
@@ -41,6 +44,12 @@
     clearTimeout(fitTimer);
     fitStage();
     fitTimer = setTimeout(fitStage, 120);
+  }
+
+  function resetDrag() {
+    slide.style.transition = "";
+    slide.style.transform = "";
+    stage.classList.remove("is-dragging");
   }
 
   function setZoom(enabled) {
@@ -88,6 +97,7 @@
 
     currentPage = nextPage;
     stage.classList.add("is-loading");
+    resetDrag();
     slide.alt = `Trang ${currentPage} trên ${TOTAL_PAGES}`;
     slide.src = imagePath(currentPage);
     updateControls();
@@ -133,12 +143,14 @@
   });
 
   viewer.addEventListener("touchstart", event => {
+    if (viewer.classList.contains("is-zoomed")) return;
     const touch = event.changedTouches[0];
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
   }, { passive: true });
 
   viewer.addEventListener("touchend", event => {
+    if (viewer.classList.contains("is-zoomed")) return;
     const touch = event.changedTouches[0];
     const deltaX = touch.clientX - touchStartX;
     const deltaY = touch.clientY - touchStartY;
@@ -147,24 +159,41 @@
     }
   }, { passive: true });
 
-  shareButton.addEventListener("click", async () => {
-    const shareData = {
-      title: document.title,
-      text: "Xem tài liệu trực tuyến",
-      url: location.href
-    };
+  stage.addEventListener("pointerdown", event => {
+    if (viewer.classList.contains("is-zoomed")) return;
+    isDragging = true;
+    pointerStartX = event.clientX;
+    pointerStartY = event.clientY;
+    pointerCurrentX = event.clientX;
+    stage.classList.add("is-dragging");
+    slide.style.transition = "none";
+    stage.setPointerCapture(event.pointerId);
+  });
 
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(location.href);
-        notify("Đã sao chép liên kết");
-      }
-    } catch (error) {
-      if (error.name !== "AbortError") notify("Không thể chia sẻ liên kết");
+  stage.addEventListener("pointermove", event => {
+    if (!isDragging || viewer.classList.contains("is-zoomed")) return;
+    pointerCurrentX = event.clientX;
+    const deltaX = pointerCurrentX - pointerStartX;
+    const limitedDelta = Math.max(-120, Math.min(120, deltaX));
+    slide.style.transform = `translateX(${limitedDelta}px)`;
+  });
+
+  stage.addEventListener("pointerup", event => {
+    if (!isDragging) return;
+    isDragging = false;
+    const deltaX = event.clientX - pointerStartX;
+    const deltaY = event.clientY - pointerStartY;
+    slide.style.transition = "transform .18s ease, opacity .14s ease";
+
+    if (Math.abs(deltaX) > 65 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+      slide.style.transform = `translateX(${deltaX < 0 ? -180 : 180}px)`;
+      setTimeout(() => showPage(currentPage + (deltaX < 0 ? 1 : -1)), 80);
+    } else {
+      resetDrag();
     }
   });
+
+  stage.addEventListener("pointercancel", resetDrag);
 
   fullscreenButton.addEventListener("click", async () => {
     try {

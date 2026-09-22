@@ -17,3 +17,6 @@ Thay doi:
 - Trinh duyet se tai lai CSS/JS moi nho doi cache version len v=3.
 - Ban v4 do truc tiep chieu cao that cua khung xem, tu co slide lai de khong bi cat day.
 - Cache version doi len v=4, neu GitHub da nhan ban moi thi View source se thay styles.css?v=4.
+- Ban v5 bo thanh tieu de va thanh dieu khien duoi.
+- Chi con khung slide, nut mui ten trai/phai noi hai ben, icon phong to/toan man hinh nen trong suot.
+- Ho tro keo chuot hoac vuot ngang tren slide de chuyen trang.
