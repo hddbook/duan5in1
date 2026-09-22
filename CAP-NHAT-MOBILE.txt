@@ -20,3 +20,5 @@ Thay doi:
 - Ban v5 bo thanh tieu de va thanh dieu khien duoi.
 - Chi con khung slide, nut mui ten trai/phai noi hai ben, icon phong to/toan man hinh nen trong suot.
 - Ho tro keo chuot hoac vuot ngang tren slide de chuyen trang.
+- Ban v6 them che do xoay ngang gia lap cho iPhone/Safari khi trinh duyet khong cho web tu khoa huong man hinh.
+- Bam nut toan man hinh mot lan de vao che do xoay ngang/full screen, bam lai de thoat.

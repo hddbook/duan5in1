@@ -23,6 +23,10 @@
   let pointerCurrentX = 0;
   let isDragging = false;
 
+  function isPortraitScreen() {
+    return window.innerHeight > window.innerWidth;
+  }
+
   function fitStage() {
     if (viewer.classList.contains("is-zoomed")) return;
 
@@ -31,8 +35,9 @@
     const paddingY = parseFloat(viewerStyle.paddingTop) + parseFloat(viewerStyle.paddingBottom);
     const viewerRect = viewer.getBoundingClientRect();
     const safeGap = window.innerWidth <= 640 ? 16 : 20;
-    const availableWidth = Math.max(220, viewerRect.width - paddingX);
-    const availableHeight = Math.max(160, viewerRect.height - paddingY - safeGap);
+    const forcedLandscape = document.body.classList.contains("force-landscape");
+    const availableWidth = Math.max(220, (forcedLandscape ? window.innerHeight : viewerRect.width) - paddingX);
+    const availableHeight = Math.max(160, (forcedLandscape ? window.innerWidth : viewerRect.height) - paddingY - safeGap);
     const width = Math.floor(Math.min(availableWidth, availableHeight * 16 / 9));
     const height = Math.floor(width * 9 / 16);
 
@@ -50,6 +55,50 @@
     slide.style.transition = "";
     slide.style.transform = "";
     stage.classList.remove("is-dragging");
+  }
+
+  function setForcedLandscape(enabled) {
+    document.body.classList.toggle("force-landscape", enabled);
+    fullscreenButton.setAttribute("aria-label", enabled ? "Thoát xoay ngang" : "Xem toàn màn hình");
+    fullscreenButton.title = enabled ? "Thoát xoay ngang" : "Toàn màn hình";
+    setZoom(false);
+    queueFitStage();
+  }
+
+  async function requestNativeFullscreen() {
+    if (document.fullscreenElement || !document.documentElement.requestFullscreen) return false;
+    try {
+      await document.documentElement.requestFullscreen();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function exitNativeFullscreen() {
+    if (!document.fullscreenElement || !document.exitFullscreen) return;
+    try {
+      await document.exitFullscreen();
+    } catch {
+      /* no-op */
+    }
+  }
+
+  async function lockLandscape() {
+    if (!screen.orientation?.lock) return false;
+    try {
+      await screen.orientation.lock("landscape");
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function handleViewportChange() {
+    if (document.body.classList.contains("force-landscape") && !isPortraitScreen()) {
+      setForcedLandscape(false);
+    }
+    queueFitStage();
   }
 
   function setZoom(enabled) {
@@ -196,27 +245,32 @@
   stage.addEventListener("pointercancel", resetDrag);
 
   fullscreenButton.addEventListener("click", async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-        if (screen.orientation?.lock) {
-          await screen.orientation.lock("landscape").catch(() => {});
-        }
-      } else {
-        await document.exitFullscreen();
-        if (screen.orientation?.unlock) screen.orientation.unlock();
-      }
-    } catch {
-      notify("Trình duyệt không hỗ trợ toàn màn hình");
+    if (document.body.classList.contains("force-landscape") || document.fullscreenElement) {
+      setForcedLandscape(false);
+      if (screen.orientation?.unlock) screen.orientation.unlock();
+      await exitNativeFullscreen();
+      return;
     }
+
+    const fullscreenOk = await requestNativeFullscreen();
+    const lockOk = await lockLandscape();
+
+    setTimeout(() => {
+      if (isPortraitScreen() || !fullscreenOk || !lockOk) {
+        setForcedLandscape(true);
+        notify("Đã xoay giao diện. Bấm lại nút này để thoát.");
+      } else {
+        queueFitStage();
+      }
+    }, 250);
   });
 
   window.addEventListener("hashchange", () => showPage(pageFromHash(), false));
-  window.addEventListener("resize", queueFitStage);
-  window.addEventListener("orientationchange", queueFitStage);
+  window.addEventListener("resize", handleViewportChange);
+  window.addEventListener("orientationchange", handleViewportChange);
   document.addEventListener("fullscreenchange", queueFitStage);
   if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", queueFitStage);
+    window.visualViewport.addEventListener("resize", handleViewportChange);
   }
   queueFitStage();
   showPage(currentPage, false);

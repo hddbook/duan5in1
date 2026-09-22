@@ -28,6 +28,10 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+body.force-landscape {
+  overflow: hidden;
+}
+
 button, input { font: inherit; }
 
 .topbar {
@@ -103,6 +107,31 @@ svg { width: 100%; height: 100%; fill: currentColor; }
   overflow: hidden;
   place-items: center;
   touch-action: pan-y;
+}
+
+body.force-landscape .viewer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100dvh;
+  height: 100dvw;
+  min-height: 0;
+  padding: 4px;
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+  z-index: 2;
+}
+
+body.force-landscape .stage {
+  border-radius: 8px;
+}
+
+body.force-landscape .topbar {
+  z-index: 8;
+}
+
+body.force-landscape .toast {
+  z-index: 9;
 }
 
 .portrait-hint { display: none !important; }
@@ -295,6 +324,16 @@ noscript {
     border-radius: 0;
   }
   .controls { min-height: 60px; padding-top: 6px; padding-bottom: 6px; }
+}
+
+@media (max-width: 640px) and (orientation: portrait) {
+  body.force-landscape .nav-button {
+    width: 46px;
+    height: 46px;
+  }
+
+  body.force-landscape #previousButton { left: 8px; }
+  body.force-landscape #nextButton { right: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
