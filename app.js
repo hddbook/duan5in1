@@ -27,6 +27,12 @@
     return window.innerHeight > window.innerWidth;
   }
 
+  function needsVirtualLandscape() {
+    const mobile = navigator.userAgentData?.mobile === true ||
+      /iPhone|iPod|Android.*Mobile/i.test(navigator.userAgent);
+    return mobile && isPortraitScreen();
+  }
+
   function fitStage() {
     if (viewer.classList.contains("is-zoomed")) return;
 
@@ -95,7 +101,7 @@
   }
 
   function handleViewportChange() {
-    if (document.body.classList.contains("force-landscape") && !isPortraitScreen()) {
+    if (document.body.classList.contains("force-landscape") && !needsVirtualLandscape()) {
       setForcedLandscape(false);
     }
     queueFitStage();
@@ -252,11 +258,11 @@
       return;
     }
 
-    const fullscreenOk = await requestNativeFullscreen();
-    const lockOk = await lockLandscape();
+    await requestNativeFullscreen();
+    await lockLandscape();
 
     setTimeout(() => {
-      if (isPortraitScreen() || !fullscreenOk || !lockOk) {
+      if (needsVirtualLandscape()) {
         setForcedLandscape(true);
         notify("Đã xoay giao diện. Bấm lại nút này để thoát.");
       } else {

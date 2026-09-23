@@ -1,6 +1,6 @@
-Bản v7: sửa hai nút chuyển trang trong chế độ xoay ngang giả lập trên iPhone/Safari.
+Bản v8: chế độ xoay ngang giả lập chỉ bật trên điện thoại đang dựng dọc.
+PC bấm nút toàn màn hình sẽ dùng chế độ toàn màn hình thông thường và không xoay trang.
+Hai nút chuyển ảnh tiếp tục xoay cùng giao diện khi iPhone/Safari cần xoay giả lập.
 
-Cập nhật 2 tệp index.html và styles.css từ gói này lên thư mục gốc trang GitHub Pages, ghi đè bản v6.
-app.js đi kèm để có đủ bộ nguồn; không thay đổi chức năng so với v6.
+Tải index.html, styles.css, app.js lên thư mục gốc trang GitHub Pages và ghi đè tệp cũ.
 Giữ nguyên thư mục assets/slides/ trên website hiện tại.
-Sau khi tải lại trang, bấm nút toàn màn hình ở iPhone dựng dọc: hai nút chuyển trang sẽ xoay cùng ảnh.
